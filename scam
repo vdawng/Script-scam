@@ -93,26 +93,16 @@ local randTab = Window:CreateTab("Randomize", 4483362458)
 randTab:CreateButton({
     Name = "Randomize Pet",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Khangdz28/Randomizepet12/refs/heads/main/Khngscript"))()
-    end,
 })
 randTab:CreateButton({
     Name = "Randomize Mutation",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Khangdz28/RandomizeMutation/refs/heads/main/Khngscript"))()
-    end,
-})
 
 -- TAB: SPAWNER
 local spawnerTab = Window:CreateTab("Spawner", 4483362458)
 spawnerTab:CreateButton({
     Name = "Run Spawner",
     Callback = function()
-        local Spawner = loadstring(game:HttpGet("https://codeberg.org/darkdarkdark/roblox/raw/branch/main/Spawner.lua"))()
-        Spawner.Load()
-    end,
-})
-
 -- TAB: MISC
 local miscTab = Window:CreateTab("Misc", 4483362458)
 local dupeState = false
