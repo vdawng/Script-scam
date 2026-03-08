@@ -1,23 +1,20 @@
--- Brainrot Menu Neon Edition
+-- Brainrot Menu Neon Edition (RGB + Notify)
+
 local player = game.Players.LocalPlayer
 local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 gui.Name = "BrainrotNeonMenu"
 
--- ===== LOADING WITH % =====
-local loadFrame = Instance.new("Frame", gui)
-loadFrame.Size = UDim2.new(1,0,1,0)
-loadFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
-
-local barBG = Instance.new("Frame", loadFrame)
+-- ===== CLEAN LOADING =====
+local barBG = Instance.new("Frame", gui)
 barBG.Size = UDim2.new(0.45,0,0.06,0)
 barBG.Position = UDim2.new(0.275,0,0.5,0)
 barBG.BackgroundColor3 = Color3.fromRGB(30,0,0)
 barBG.BorderSizePixel = 0
 Instance.new("UICorner", barBG).CornerRadius = UDim.new(0,14)
 
-local stroke = Instance.new("UIStroke", barBG)
-stroke.Color = Color3.fromRGB(255,0,0)
-stroke.Thickness = 2
+local strokeLoad = Instance.new("UIStroke", barBG)
+strokeLoad.Color = Color3.fromRGB(255,0,0)
+strokeLoad.Thickness = 2
 
 local bar = Instance.new("Frame", barBG)
 bar.Size = UDim2.new(0,0,1,0)
@@ -25,9 +22,9 @@ bar.BackgroundColor3 = Color3.fromRGB(255,40,40)
 bar.BorderSizePixel = 0
 Instance.new("UICorner", bar).CornerRadius = UDim.new(0,14)
 
-local percent = Instance.new("TextLabel", loadFrame)
+local percent = Instance.new("TextLabel", gui)
 percent.Size = UDim2.new(1,0,0.05,0)
-percent.Position = UDim2.new(0,0,0.57,0)
+percent.Position = UDim2.new(0,0,0.56,0)
 percent.BackgroundTransparency = 1
 percent.TextColor3 = Color3.fromRGB(255,80,80)
 percent.TextScaled = true
@@ -40,7 +37,8 @@ for i = 0,100 do
 	task.wait(0.03)
 end
 
-loadFrame:Destroy()
+barBG:Destroy()
+percent:Destroy()
 
 -- ===== MAIN MENU =====
 local main = Instance.new("Frame", gui)
@@ -51,26 +49,48 @@ main.Active = true
 main.Draggable = true
 Instance.new("UICorner", main).CornerRadius = UDim.new(0,16)
 
-local glow1 = Instance.new("UIStroke", main)
-glow1.Color = Color3.fromRGB(255,0,0)
-glow1.Thickness = 2
-
-local glow2 = Instance.new("UIStroke", main)
-glow2.Color = Color3.fromRGB(255,70,70)
-glow2.Thickness = 8
-glow2.Transparency = 0.5
+-- RGB LED BORDER
+local glow = Instance.new("UIStroke", main)
+glow.Thickness = 3
+spawn(function()
+	while true do
+		for i=0,255,4 do
+			glow.Color = Color3.fromHSV(i/255,1,1)
+			task.wait(0.03)
+		end
+	end
+end)
 
 -- Title
 local title = Instance.new("TextLabel", main)
 title.Size = UDim2.new(1,0,0,50)
 title.BackgroundTransparency = 1
 title.Text = "🧠 Brainrot Trade Menu"
-title.TextColor3 = Color3.fromRGB(255,70,70)
+title.TextColor3 = Color3.fromRGB(255,90,90)
 title.TextScaled = true
 title.Font = Enum.Font.GothamBold
 
--- ===== TOGGLE SWITCH FUNCTION =====
-local function createToggle(text, yPos, default)
+-- ===== NOTIFICATION FUNCTION =====
+local function notify(msg,color)
+	local n = Instance.new("TextLabel", gui)
+	n.Size = UDim2.new(0,260,0,50)
+	n.Position = UDim2.new(0.5,-130,0.85,0)
+	n.BackgroundColor3 = Color3.fromRGB(20,20,20)
+	n.TextColor3 = Color3.new(1,1,1)
+	n.TextScaled = true
+	n.Font = Enum.Font.GothamBold
+	n.Text = msg
+	Instance.new("UICorner", n).CornerRadius = UDim.new(0,12)
+	local s = Instance.new("UIStroke", n)
+	s.Color = color
+	s.Thickness = 2
+	n:TweenPosition(UDim2.new(0.5,-130,0.78,0),"Out","Quad",0.25,true)
+	task.wait(1.2)
+	n:Destroy()
+end
+
+-- ===== TOGGLE FUNCTION =====
+local function createToggle(text, yPos, state)
 	local holder = Instance.new("Frame", main)
 	holder.Size = UDim2.new(0.85,0,0,55)
 	holder.Position = UDim2.new(0.075,0,0,yPos)
@@ -86,32 +106,35 @@ local function createToggle(text, yPos, default)
 	label.Size = UDim2.new(0.65,0,1,0)
 	label.BackgroundTransparency = 1
 	label.Text = text
-	label.TextColor3 = Color3.fromRGB(255,255,255)
+	label.TextColor3 = Color3.new(1,1,1)
 	label.TextScaled = true
 	label.Font = Enum.Font.GothamBold
 	
 	local toggle = Instance.new("Frame", holder)
 	toggle.Size = UDim2.new(0,70,0,30)
 	toggle.Position = UDim2.new(0.75,0,0.5,-15)
-	toggle.BackgroundColor3 = default and Color3.fromRGB(0,200,0) or Color3.fromRGB(60,60,60)
-	toggle.BorderSizePixel = 0
+	toggle.BackgroundColor3 = state and Color3.fromRGB(0,200,0) or Color3.fromRGB(60,60,60)
 	Instance.new("UICorner", toggle).CornerRadius = UDim.new(1,0)
 	
 	local knob = Instance.new("Frame", toggle)
 	knob.Size = UDim2.new(0,26,0,26)
-	knob.Position = default and UDim2.new(1,-28,0.5,-13) or UDim2.new(0,2,0.5,-13)
-	knob.BackgroundColor3 = Color3.fromRGB(255,255,255)
-	knob.BorderSizePixel = 0
+	knob.Position = state and UDim2.new(1,-28,0.5,-13) or UDim2.new(0,2,0.5,-13)
+	knob.BackgroundColor3 = Color3.new(1,1,1)
 	Instance.new("UICorner", knob).CornerRadius = UDim.new(1,0)
 	
 	toggle.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-			default = not default
-			toggle.BackgroundColor3 = default and Color3.fromRGB(0,200,0) or Color3.fromRGB(60,60,60)
+			state = not state
+			toggle.BackgroundColor3 = state and Color3.fromRGB(0,200,0) or Color3.fromRGB(60,60,60)
 			knob:TweenPosition(
-				default and UDim2.new(1,-28,0.5,-13) or UDim2.new(0,2,0.5,-13),
+				state and UDim2.new(1,-28,0.5,-13) or UDim2.new(0,2,0.5,-13),
 				"Out","Quad",0.15,true
 			)
+			if state then
+				notify(text.." : ON", Color3.fromRGB(0,255,0))
+			else
+				notify(text.." : OFF", Color3.fromRGB(255,0,0))
+			end
 		end
 	end)
 end
@@ -120,51 +143,33 @@ createToggle("Freeze Trade",70,false)
 createToggle("Auto Accept Trade",135,true)
 createToggle("Trade Protection",200,false)
 
--- ===== TIKTOK PANEL =====
-local social = Instance.new("Frame", main)
-social.Size = UDim2.new(0.85,0,0,60)
-social.Position = UDim2.new(0.075,0,0,265)
-social.BackgroundColor3 = Color3.fromRGB(25,0,0)
-social.BorderSizePixel = 0
-Instance.new("UICorner", social).CornerRadius = UDim.new(0,12)
+-- ===== MINIMIZE BUTTON =====
+local miniBtn = Instance.new("TextButton", main)
+miniBtn.Size = UDim2.new(0,30,0,30)
+miniBtn.Position = UDim2.new(1,-35,0,5)
+miniBtn.Text = "—"
+miniBtn.TextScaled = true
+miniBtn.BackgroundColor3 = Color3.fromRGB(40,0,0)
+miniBtn.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", miniBtn).CornerRadius = UDim.new(1,0)
 
-local sStroke = Instance.new("UIStroke", social)
-sStroke.Color = Color3.fromRGB(255,0,60)
-sStroke.Thickness = 1
+local miniIcon = Instance.new("TextButton", gui)
+miniIcon.Size = UDim2.new(0,55,0,55)
+miniIcon.Position = UDim2.new(0,20,0.5,-25)
+miniIcon.BackgroundColor3 = Color3.fromRGB(25,0,0)
+miniIcon.Text = "🧠"
+miniIcon.TextScaled = true
+miniIcon.Visible = false
+Instance.new("UICorner", miniIcon).CornerRadius = UDim.new(1,0)
 
-local label = Instance.new("TextLabel", social)
-label.Size = UDim2.new(1,0,1,0)
-label.BackgroundTransparency = 1
-label.Text = "TikTok / YouTube\n@vdawng"
-label.TextColor3 = Color3.fromRGB(255,255,255)
-label.TextScaled = true
-label.Font = Enum.Font.GothamBold
+miniBtn.MouseButton1Click:Connect(function()
+	main.Visible = false
+	miniIcon.Visible = true
+end)
 
-local btn = Instance.new("TextButton", social)
-btn.Size = UDim2.new(1,0,1,0)
-btn.BackgroundTransparency = 1
-btn.Text = ""
-
-btn.MouseButton1Click:Connect(function()
-	local popup = Instance.new("TextLabel", gui)
-	popup.Size = UDim2.new(0,320,0,60)
-	popup.Position = UDim2.new(0.5,-160,0.1,0)
-	popup.BackgroundColor3 = Color3.fromRGB(20,0,0)
-	popup.Text = "📢 TikTok: @vdawng.09"
-	popup.TextColor3 = Color3.fromRGB(255,80,80)
-	popup.TextScaled = true
-	popup.Font = Enum.Font.GothamBold
-	Instance.new("UICorner", popup).CornerRadius = UDim.new(0,12)
-	
-	local ps = Instance.new("UIStroke", popup)
-	ps.Color = Color3.fromRGB(255,0,0)
-	ps.Thickness = 2
-	
-	popup:TweenPosition(UDim2.new(0.5,-160,0.15,0),"Out","Quad",0.4,true)
-	wait(2)
-	popup:TweenPosition(UDim2.new(0.5,-160,0.05,0),"In","Quad",0.4,true)
-	wait(0.4)
-	popup:Destroy()
+miniIcon.MouseButton1Click:Connect(function()
+	main.Visible = true
+	miniIcon.Visible = false
 end)
 
 -- Credit
